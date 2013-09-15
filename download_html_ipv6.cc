@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 
     char requestHeader[] = "GET / HTTP/1.0\r\nHost: www.kame.net\r\n\r\n";
 
+    //attention: not sizeof() or you won't receive from the server
     if(send(sockfd, requestHeader, strlen(requestHeader),0) < 0){
         perror("send");
         exit(errno);
