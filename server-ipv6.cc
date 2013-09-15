@@ -35,6 +35,8 @@ int main(int argc, char **argv)
 
     addr.sin6_family = AF_INET6;
     addr.sin6_port = htons(myport);
+    //it's strange for address with '\0' is ok in connect(),
+    // but not in bind()
     char addrstr1[] = "fe80::201:2ff:fe92:30fb";
     char addrstr[23];
     memcpy(addrstr,addrstr1,sizeof(addrstr1)-1);

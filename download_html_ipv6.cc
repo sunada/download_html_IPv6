@@ -12,16 +12,16 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
-#include <string.h>
+#include <string>
+
+using namespace std;
 
 #define MAXBUF 1024
 
 int main(int argc, char **argv)
 {
     int sockfd;
-    int len;
     struct sockaddr_in6 dest;
-    char buffer[MAXBUF + 1];
 
     if((sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0){
         perror("Socket");
@@ -35,8 +35,10 @@ int main(int argc, char **argv)
 
     dest.sin6_family = AF_INET6;
     dest.sin6_port = htons(80);
+    // it's strange for address with '\0' is ok in connect()
+    // but not in bind()
     char address1[] = "2001:200:dff:fff1:216:3eff:feb1:44d7";
-    printf("sizeof(address1): %d\n", sizeof(address1));
+    //printf("sizeof(address1): %d\n", sizeof(address1));
 
     //char address1[] = "fe80::201:2ff:fe92:30fb";
     //dest.sin6_port = htons(7838);
@@ -44,7 +46,7 @@ int main(int argc, char **argv)
     char address[36];
     memcpy(address, address1, sizeof(address1)-1);
 
-    if(inet_pton(AF_INET6, address, &dest.sin6_addr) < 0){
+    if(inet_pton(AF_INET6, address1, &dest.sin6_addr) < 0){
         perror("inet_pton");
         exit(errno);
     }
@@ -62,6 +64,30 @@ int main(int argc, char **argv)
         exit(errno);
     }
     printf("server connected\n");
+
+    char requestHeader[] = "GET / HTTP/1.0\r\nHost: www.kame.net\r\n\r\n";
+
+    if(send(sockfd, requestHeader, strlen(requestHeader),0) < 0){
+        perror("send");
+        exit(errno);
+    }
+    printf("send successful\n");
+    
+    char buffer[MAXBUF + 1];
+    memset(buffer, 0, MAXBUF+1);
+    if(recv(sockfd, buffer, MAXBUF, 0) < 0){
+        perror("recv");
+        exit(errno);
+    }
+    printf("receive sucessful\n");
+
+    string respondHeader = string(buffer);
+    if(respondHeader.find("HTTP/1.1 200 OK",0) == string::npos){
+        perror("failed get");
+        return 100;
+    }
+    printf("recv respond from server\n");
+    printf("receid buffer: %s\n", buffer);
 
     close(sockfd);
     return 0;
