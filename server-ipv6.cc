@@ -1,3 +1,10 @@
+/*************************************************
+*filename: server-ipv6.cc
+*purpose: build a local server using IPv6 address, waiting for connection
+*author: Ada Sun
+*data: 2013/08/20
+**************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
