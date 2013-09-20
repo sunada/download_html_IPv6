@@ -1,6 +1,6 @@
 /*********************discription*************************
 *filename: download_html_ipv6.cc
-*purpose: connects to an IPv6 website, downloads the first page of html or the robots.txt of the website.
+*purpose: connects to the IPv6 website of www.kame.net, downloads the first page of html or the robots.txt of the website.
 *author: Ada Sun
 *date: 2013/08/14
 **********************************************************/
